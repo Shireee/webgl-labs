@@ -7,32 +7,44 @@ window.onload = () => {
     const gl = canvas.getContext("webgl");
   
     // Vertex shader program
+// Vertex shader program
+
     const vsSource = `
         attribute vec4 aVertexPosition;
+        attribute vec4 aVertexColor;
+
         uniform mat4 uModelViewMatrix;
         uniform mat4 uProjectionMatrix;
-        void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }`;
+
+        varying lowp vec4 vColor;
+
+        void main(void) {
+          gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+          vColor = aVertexColor;
+        }
+      `;
 
     // Fragment shader program
     const fsSource = `
-    void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }`;
-    
+      varying lowp vec4 vColor;
+
+      void main(void) {
+        gl_FragColor = vColor;
+      }
+    `;
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource); // Initialize a shader program
 
     // Create a program info with all attribute and uniforms
     const programInfo = {
-        program: shaderProgram,
-        attribLocations: {
+      program: shaderProgram,
+      attribLocations: {
         vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-        },
-        uniformLocations: {
+        vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
+      },
+      uniformLocations: {
         projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
         modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
-        },
+      },
     };
     
     // Create buffers
