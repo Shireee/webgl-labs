@@ -20,13 +20,10 @@ window.onload = () => {
     void main() {
       gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
     }`;
+    
+    const shaderProgram = initShaderProgram(gl, vsSource, fsSource); // Initialize a shader program
 
-    // Initialize a shader program; this is where all the lighting for the vertices and so forth is established.
-    const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
-
-    // Collect all the info needed to use the shader program.
-    // Look up which attribute our shader program is using
-    // for aVertexPosition and look up uniform locations.
+    // Create a program info with all attribute and uniforms
     const programInfo = {
         program: shaderProgram,
         attribLocations: {
@@ -38,60 +35,36 @@ window.onload = () => {
         },
     };
     
-    // Here's where we call the routine that builds all the
-    // objects we'll be drawing.
+    // Create buffers
     const buffers = initBuffers(gl);
 
     // Draw the scene
     drawScene(gl, programInfo, buffers);
-
 }
 
 
 // Initialize a shader program, so WebGL knows how to draw our data
 function initShaderProgram(gl, vsSource, fsSource) {
-    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-  
-    // Create the shader program
-  
-    const shaderProgram = gl.createProgram();
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource); // load a vertex shader
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource); // load a fragment shader
+    const shaderProgram = gl.createProgram(); // Create the shader program
+    
+    // attach shaders to instance of programm and link it to webgl context
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader); 
     gl.linkProgram(shaderProgram);
   
-    // If creating the shader program failed, alert
-  
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-      alert(
-        `Unable to initialize the shader program: ${gl.getProgramInfoLog(
-          shaderProgram,
-        )}`,
-      );
-      return null;
-    }
-  
     return shaderProgram;
-  }
+}
   
 
 // creates a shader of the given type, uploads the source and compiles it.
 function loadShader(gl, type, source) {
-    const shader = gl.createShader(type);
+    const shader = gl.createShader(type); // create a pure instance of determed shader type 
     
     gl.shaderSource(shader, source); // Send the source to the shader object
     gl.compileShader(shader); // Compile the shader program
   
-
-    // See if it compiled successfully
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      alert(
-        `An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`,
-      );
-      gl.deleteShader(shader);
-      return null;
-    }
-  
     return shader;
-  }
+}
   

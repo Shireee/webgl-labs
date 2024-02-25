@@ -1,44 +1,27 @@
 function drawScene(gl, programInfo, buffers) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
-    gl.clearDepth(1.0); // Clear everything
-    gl.enable(gl.DEPTH_TEST); // Enable depth testing
-    gl.depthFunc(gl.LEQUAL); // Near things obscure far things
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // set default color of buffer 
+    gl.clearDepth(1.0); // set default depth of buffer
+
+    gl.enable(gl.DEPTH_TEST); // Enable z-index cheking 
+    gl.depthFunc(gl.LEQUAL); // Determ an alghoritm of z-index cheking 
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // clear color and depth buffers 
   
-    // Clear the canvas before we start drawing on it.
-  
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  
-    // Create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-  
-    const fieldOfView = (30 * Math.PI) / 180; // in radians
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const fieldOfView = (45 * Math.PI) / 180;
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight; 
     const zNear = 0.1;
     const zFar = 100.0;
     const projectionMatrix = mat4.create();
   
-    // note: glmatrix.js always has the first argument as the destination to receive the result.
-    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-  
-    // Set the drawing position to the "identity" point, which isthe center of the scene.
+    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);   // Create a perspective matrix
+
     const modelViewMatrix = mat4.create();
   
     // Now move the drawing position a bit to where we want to start drawing the square.
-    mat4.translate(
-      modelViewMatrix, // destination matrix
-      modelViewMatrix, // matrix to translate
-      [-0.0, 0.0, -6.0],
-    ); // amount to translate
+    mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]); 
   
-    // Tell WebGL how to pull out the positions from the position buffer into the vertexPosition attribute.
-    setPositionAttribute(gl, buffers, programInfo);
-  
-    // Tell WebGL to use our program when drawing
-    gl.useProgram(programInfo.program);
+    setPositionAttribute(gl, buffers, programInfo); // Tell WebGL how to pull out the positions from the position buffer 
+    gl.useProgram(programInfo.program); // Tell WebGL to use shaders
   
     // Set the shader uniforms
     gl.uniformMatrix4fv(
@@ -51,7 +34,6 @@ function drawScene(gl, programInfo, buffers) {
       false,
       modelViewMatrix,
     );
-  
     {
       const offset = 0;
       const vertexCount = 4;
