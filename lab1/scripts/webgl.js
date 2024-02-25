@@ -5,8 +5,6 @@ window.onload = () => {
     // getting webgl context 
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
-    let squareRotation = 0.0;
-    let deltaTime = 0;
   
     // Vertex shader program
     const vsSource = `
@@ -50,16 +48,19 @@ window.onload = () => {
     // Create buffers
     const buffers = initBuffers(gl);
 
-    let then = 0;
+    // cube rotation params
+    let then = 0; 
+    let cubeRotation = 0.0;
+    let deltaTime = 0;
 
     // Add loop 
     function render(now) {
-      now *= 0.001; // convert to seconds
+      now *= 0.002; // convert to seconds
       deltaTime = now - then;
       then = now;
     
-      drawScene(gl, programInfo, buffers, squareRotation);
-      squareRotation += deltaTime;
+      drawScene(gl, programInfo, buffers, cubeRotation);
+      cubeRotation += deltaTime;      
     
       requestAnimationFrame(render);
     }

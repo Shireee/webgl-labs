@@ -1,4 +1,4 @@
-function drawScene(gl, programInfo, buffers, squareRotation) {
+function drawScene(gl, programInfo, buffers, cubeRotation) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // set default color of buffer 
     gl.clearDepth(1.0); // set default depth of buffer
 
@@ -17,14 +17,17 @@ function drawScene(gl, programInfo, buffers, squareRotation) {
 
     const modelViewMatrix = mat4.create();
   
-    // Now move the drawing position a bit to where we want to start drawing the square.
+    // Matrix transforming
     mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]); 
-    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation, [0, 0, 1]); // axis to rotate around
-
+    mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation, [0, 0, 1]); // axis to rotate around (Z)
+    mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation * 0.7, [0, 1, 0]); // axis to rotate around (Y)
+    mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation * 0.3, [1, 0, 0]); // axis to rotate around (X)
+    
     setPositionAttribute(gl, buffers, programInfo); // set vertex pos 
     setColorAttribute(gl, buffers, programInfo); // set color
 
     gl.useProgram(programInfo.program); // use shaders
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices); // use indexes
   
     // Set the shader uniforms
     gl.uniformMatrix4fv(
@@ -37,16 +40,18 @@ function drawScene(gl, programInfo, buffers, squareRotation) {
       false,
       modelViewMatrix,
     );
+    
     {
+      const vertexCount = 36;
+      const type = gl.UNSIGNED_SHORT;
       const offset = 0;
-      const vertexCount = 4;
-      gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     }
 }
 
 // Tell WebGL how to pull out the positions from the position buffer into the vertexPosition attribute.
 function setPositionAttribute(gl, buffers, programInfo) {
-    const numComponents = 2; // pull out 2 values per iteration
+    const numComponents = 3; // pull out 3 values per iteration
     const type = gl.FLOAT; // the data in the buffer is 32bit floats
     const normalize = false; // don't normalize
     const stride = 0; // how many bytes to get from one set of values to the next
