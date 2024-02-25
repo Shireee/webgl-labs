@@ -1,4 +1,4 @@
-function drawScene(gl, programInfo, buffers) {
+function drawScene(gl, programInfo, buffers, squareRotation) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // set default color of buffer 
     gl.clearDepth(1.0); // set default depth of buffer
 
@@ -19,10 +19,12 @@ function drawScene(gl, programInfo, buffers) {
   
     // Now move the drawing position a bit to where we want to start drawing the square.
     mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]); 
-  
-    setPositionAttribute(gl, buffers, programInfo); // Tell WebGL how to pull out the positions from the position buffer 
-    setColorAttribute(gl, buffers, programInfo);
-    gl.useProgram(programInfo.program); // Tell WebGL to use shaders
+    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation, [0, 0, 1]); // axis to rotate around
+
+    setPositionAttribute(gl, buffers, programInfo); // set vertex pos 
+    setColorAttribute(gl, buffers, programInfo); // set color
+
+    gl.useProgram(programInfo.program); // use shaders
   
     // Set the shader uniforms
     gl.uniformMatrix4fv(
