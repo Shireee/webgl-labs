@@ -49,23 +49,8 @@ window.onload = () => {
     // Create buffers
     const buffers = initBuffers(gl);
 
-    // cube rotation params
-    let then = 0; 
-    let cubeRotation = 0.0;
-    let deltaTime = 0;
-
-    // Add loop 
-    function render(now) {
-      now *= 0.002; // convert to seconds
-      deltaTime = now - then;
-      then = now;
-    
-      drawScene(gl, programInfo, buffers, cubeRotation);
-      cubeRotation += deltaTime;      
-    
-      requestAnimationFrame(render);
-    }
-    requestAnimationFrame(render);
+    // Draw the scene
+    drawScene(gl, programInfo, buffers);
     
 }
 
